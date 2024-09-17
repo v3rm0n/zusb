@@ -25,7 +25,7 @@ pub const Interfaces = struct {
         if (self.i < self.interfaces.len) {
             defer self.i += 1;
 
-            const len = @intCast(usize, self.interfaces[self.i].num_altsetting);
+            const len: usize = @intCast(self.interfaces[self.i].num_altsetting);
 
             return Interface{
                 .iter = self.interfaces[self.i].altsetting[0..len],

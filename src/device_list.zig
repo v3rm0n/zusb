@@ -14,7 +14,7 @@ pub const Devices = struct {
     pub fn next(self: *Devices) ?Device {
         if (self.i < self.devices.len) {
             defer self.i += 1;
-            return fromLibusb(self.ctx.ctx, self.devices[self.i].?);
+            return fromLibusb(Device, .{ self.ctx, self.devices[self.i].? });
         } else {
             return null;
         }
@@ -28,15 +28,15 @@ pub const DeviceList = struct {
 
     pub fn init(ctx: *Context) err.Error!DeviceList {
         var list: [*c]?*c.libusb_device = undefined;
-        const n = c.libusb_get_device_list(ctx.ctx, &list);
+        const n = c.libusb_get_device_list(ctx.raw, &list);
 
         if (n < 0) {
-            return err.errorFromLibusb(@intCast(c_int, n));
+            return err.errorFromLibusb(@intCast(n));
         } else {
             return DeviceList{
                 .ctx = ctx,
                 .list = list,
-                .len = @intCast(usize, n),
+                .len = @intCast(n),
             };
         }
     }

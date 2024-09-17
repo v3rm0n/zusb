@@ -42,6 +42,10 @@ pub const Device = struct {
         return c.libusb_get_bus_number(self.raw);
     }
 
+    pub fn portNumber(self: Device) u8 {
+        return c.libusb_get_port_number(self.raw);
+    }
+
     pub fn address(self: Device) u8 {
         return c.libusb_get_device_address(self.raw);
     }
