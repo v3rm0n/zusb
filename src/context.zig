@@ -23,6 +23,16 @@ pub const Context = struct {
         return DeviceList.init(self);
     }
 
+    pub fn handleEvents(self: Context) err.Error!void {
+        try err.failable(c.libusb_handle_events_completed(self.raw, null));
+    }
+
+    pub fn openDeviceWithFd(self: *Context, fd: isize) err.Error!DeviceHandle {
+        var device_handle: *c.libusb_device_handle = undefined;
+        try err.failable(c.libusb_wrap_sys_device(self.raw, fd, &device_handle));
+        return fromLibusb(DeviceHandle, .{ self, device_handle });
+    }
+
     pub fn openDeviceWithVidPid(
         self: *Context,
         vendor_id: u16,
