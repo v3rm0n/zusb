@@ -38,11 +38,11 @@ pub fn Transfer(comptime T: type) type {
 
         pub fn submit(self: *Self) err.Error!void {
             self.transfer.user_data = self;
-            try err.failable(c.libusb_submit_transfer(@ptrCast(*c.libusb_transfer, self.transfer)));
+            try err.failable(c.libusb_submit_transfer(@ptrCast(self.transfer)));
         }
 
         pub fn cancel(self: *Self) err.Error!void {
-            try err.failable(c.libusb_cancel_transfer(@ptrCast(*c.libusb_transfer, self.transfer)));
+            try err.failable(c.libusb_cancel_transfer(@ptrCast(self.transfer)));
         }
 
         pub fn buffer(self: Self) []u8 {
@@ -59,7 +59,7 @@ pub fn Transfer(comptime T: type) type {
             user_data: T,
             timeout: u64,
         ) (Allocator.err.Error || err.Error)!*Self {
-            const opt_transfer = @intToPtr(?*libusb_transfer, @ptrToInt(c.libusb_alloc_transfer(0)));
+            const opt_transfer: ?*libusb_transfer = @ptrFromInt(@intFromPtr(c.libusb_alloc_transfer(0)));
 
             if (opt_transfer) |transfer| {
                 transfer.*.dev_handle = handle.handle;
@@ -85,7 +85,7 @@ pub fn Transfer(comptime T: type) type {
         }
 
         export fn callbackRaw(transfer: *libusb_transfer) void {
-            const self = @intToPtr(*Self, @ptrToInt(transfer.user_data.?));
+            const self: *Self = @ptrFromInt(@intFromPtr(transfer.user_data.?));
             self.callback(self);
         }
     };
