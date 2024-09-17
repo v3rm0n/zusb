@@ -32,7 +32,7 @@ pub fn Transfer(comptime T: type) type {
         callback: fn (*Self) void,
 
         pub fn deinit(self: *const Self) void {
-            c.libusb_free_transfer(@ptrCast(*c.libusb_transfer, self.transfer));
+            c.libusb_free_transfer(@ptrCast(self.transfer));
             self.allocator.destroy(self);
         }
 
