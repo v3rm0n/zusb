@@ -70,7 +70,7 @@ pub fn Transfer(comptime T: type) type {
                 transfer.*.length = std.math.cast(c_int, buf.len) orelse @panic("Length too large");
                 transfer.*.callback = callbackRaw;
 
-                var self = try allocator.create(Self);
+                const self = try allocator.create(Self);
                 self.* = Self{
                     .allocator = allocator,
                     .transfer = transfer,
