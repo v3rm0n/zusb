@@ -2,6 +2,7 @@ const c = @import("c.zig");
 const DeviceHandle = @import("device_handle.zig").DeviceHandle;
 const DeviceList = @import("device_list.zig").DeviceList;
 const fromLibusb = @import("constructor.zig").fromLibusb;
+const LogLevel = @import("options.zig").LogLevel;
 
 const err = @import("error.zig");
 
@@ -13,6 +14,10 @@ pub const Context = struct {
         try err.failable(c.libusb_init(&ctx));
 
         return Context{ .raw = ctx.? };
+    }
+
+    pub fn setLogLevel(self: Context, log_level: LogLevel) err.Error!void {
+        try err.failable(c.libusb_set_option(self.raw, c.LIBUSB_OPTION_LOG_LEVEL, @intFromEnum(log_level)));
     }
 
     pub fn deinit(self: Context) void {
