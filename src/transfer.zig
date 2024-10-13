@@ -43,7 +43,7 @@ pub fn Transfer(comptime T: type) type {
 
         pub fn deinit(self: *Self) void {
             if (self.active) {
-                self.cancel() catch |e| std.log.err("Failed to cancel transfer: {}", .{e});
+                @panic("Can't deinit an active transfer");
             }
             const flags = self.transferFlags();
             if (!flags.freeTransfer) {

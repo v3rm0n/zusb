@@ -1,4 +1,5 @@
 const c = @import("c.zig");
+const std = @import("std");
 const DeviceHandle = @import("device_handle.zig").DeviceHandle;
 const DeviceList = @import("device_list.zig").DeviceList;
 const fromLibusb = @import("constructor.zig").fromLibusb;
@@ -29,7 +30,8 @@ pub const Context = struct {
     }
 
     pub fn handleEvents(self: Context) err.Error!void {
-        try err.failable(c.libusb_handle_events_completed(self.raw, null));
+        var tv = std.c.timeval{ .sec = 0, .usec = 100_000 };
+        try err.failable(c.libusb_handle_events_timeout(self.raw, @ptrCast(&tv)));
     }
 
     pub fn openDeviceWithFd(self: *Context, fd: isize) err.Error!DeviceHandle {
